@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def index():
+def home():
     # fetch the blog posts from the JSON file
     with open("file_path", "r") as file:
         blog_posts = json.load(file)
@@ -46,9 +46,26 @@ def add_post():
             json.dump(blog_posts, file, indent=4)
 
         # Redirect to the index page after adding the post
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
 
     return render_template('create_post.html')
+
+
+@app.route('/delete/<int:post_id>', methods=['POST'])
+def delete_post(post_id):
+    # Load the existing posts from the JSON file
+    with open('path/to/blog_posts.json', 'r') as file:
+        blog_posts = json.load(file)
+
+    # Filter out the post with the given post_id
+    blog_posts = [post for post in blog_posts if post['id'] != post_id]
+
+    # Save the updated list back to the JSON file
+    with open('path/to/blog_posts.json', 'w') as file:
+        json.dump(blog_posts, file, indent=4)
+
+    # Redirect back to the index page
+    return redirect(url_for('home'))
 
 
 if __name__ == '__main__':
