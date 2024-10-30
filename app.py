@@ -87,7 +87,7 @@ def edit_post(post_id):
         post['content'] = request.form['content']
 
         # Save the updated posts back to the JSON file
-        with open('path/to/blog_posts.json', 'w') as file:
+        with open('masterblog/blog_posts.json', 'w') as file:
             json.dump(blog_posts, file, indent=4)
 
         # Redirect to the main page or specific post page
@@ -95,6 +95,29 @@ def edit_post(post_id):
 
     # Render the update form with current post data if it's a GET request
     return render_template('update_post.html', post=post)
+
+
+@app.route('/like/<int:post_id>', methods=['POST'])
+def like_post(post_id):
+    # Load existing posts from the JSON file
+    with open('masterblog/blog_posts.json', 'r') as file:
+        blog_posts = json.load(file)
+
+    # Find the post to like
+    post = next((p for p in blog_posts if p['id'] == post_id), None)
+
+    if not post:
+        return "Post not found", 404
+
+    # Increment the like count (initialize if it's not already present)
+    post['likes'] = post.get('likes', 0) + 1
+
+    # Save the updated posts back to the JSON file
+    with open('masterblog/blog_posts.json', 'w') as file:
+        json.dump(blog_posts, file, indent=4)
+
+    # Redirect back to the home page or the post list
+    return redirect(url_for('home'))
 
 
 if __name__ == '__main__':
